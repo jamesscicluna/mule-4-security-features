@@ -4,7 +4,7 @@
 
 A simple client-server setup to showcase the use of Mule 4 Secure Configuration Properties Module, Validation Module and different operations from the Cryptography Module
 
-> **_DISCLAIMER:_** The only purpose of this source code is to showcase the use of different security features in Mule 4, as explained in [this blogpost](https://www.ricston.com/?p=33097&preview=true). **Do not under any circumstance use these applications in a production environment.** The private keys are publically accessible, the public keys are not certified by a Certificate Authority and the author and Ricston Ltd. are not responsible for any problems arising from the use of any part of this source code in a production environment.                  
+> **_DISCLAIMER:_** The only purpose of this source code is to showcase the use of different security features in Mule 4, as explained in [this blogpost](https://www.ricston.com/?p=33097&preview=true). **Do not under any circumstance use these applications in a production environment.** The private keys are publically accessible, the public keys are not certified by a Certificate Authority and the author and Ricston Ltd. are not responsible for any problems arising from the use of any part of this source code.                  
 
 ## Setup
 
