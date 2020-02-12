@@ -13,8 +13,8 @@ A simple client-server setup to showcase the use of Mule 4 Secure Configuration 
 3. If you want to change the default client and server application ports (which are 8091 and 8092 respectively), simply change  http.port (client port) and http.server.port (server port) in the client application and change http.port (server port) in the server application from the configuration files located in src/main/resources/config/configuration.yaml.
 
 4. Set the following two environment variables via Run > Run configurations.. > Environment Tab > New..:
-  i. *client.secure.properties.key* with value *xcuTsjLBUF8MspmsXbz06wI2TzqZFoSe*
-  ii. *server.secure.properties.key* with value *zCgE0NanJo701CdbPYJCZhELDHNRao5G*
+   * *client.secure.properties.key* with value *xcuTsjLBUF8MspmsXbz06wI2TzqZFoSe*
+   * *server.secure.properties.key* with value *zCgE0NanJo701CdbPYJCZhELDHNRao5G*
 
 5. Tick the two checkboxes next to the client and server application names in Run > Run configurations.. > General, in order to spin up both applications.
 
