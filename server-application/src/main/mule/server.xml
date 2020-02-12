@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vault="http://www.mulesoft.org/schema/mule/vault"
+	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/vault http://www.mulesoft.org/schema/mule/vault/current/mule-vault.xsd">
+
+
+
+<flow name="server-flow" doc:id="67000bc5-2bd5-4676-b03c-93acacdae34c" >
+		<http:listener doc:name="Listener" doc:id="4ddb51ae-2305-48e6-b661-54e350969f97" path="/" allowedMethods="POST" outputMimeType="application/json" config-ref="HTTP_Listener_Server"/>
+		<logger level="INFO" doc:name="Log request body" doc:id="48a8e356-7569-4870-bb23-cbbc58b830df" message="Request body received by server: #[payload]" />
+		<ee:transform doc:name="JSON to Java" doc:id="2565a326-97f8-49c6-8237-fcc4e0b6383c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="uri-decode-message-and-signature-subflow" doc:id="4b3234a5-6359-437d-a2c5-483003eea706" name="uri-decode-message-and-signature-subflow"/>
+		<flow-ref doc:name="decrypt-and-validate-message-subflow" doc:id="dbeb1afe-7b51-44f6-bcaf-e93923acf207" name="decrypt-and-validate-message-subflow"/>
+		<ee:transform doc:name="Send decrypted message as a response" doc:id="38341880-2b14-460e-a0ce-0a0aa0a092a7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: vars.decryptedMessage as String
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="uri-decode-message-and-signature-subflow" doc:id="a0210211-0b6e-4432-84dd-c55a13a6e780" >
+		<ee:transform doc:name="Decode message" doc:id="4ee345da-1606-4616-9efa-501e29e5de0e">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="message"><![CDATA[%dw 2.0
+import * from dw::core::URL
+output text/plain
+---
+decodeURI(payload.message)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log decoded encrypted message" doc:id="9f9e936a-0d9b-439a-9c76-439056ac9387" message="Server URI decoded encrypted message: #[vars.message]" />
+		<ee:transform doc:name="Decode signature" doc:id="2256eb09-7e53-47f7-8a9f-eea3a9a0a069">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="signature"><![CDATA[%dw 2.0
+import * from dw::core::URL
+output text/plain
+---
+decodeURI(payload.signature)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Log decoded signature" doc:id="a78c71c8-0159-4766-94d9-ff6168e84dbd" message="Server URI decoded signature: #[vars.signature]"/>
+	</sub-flow>
+	<sub-flow name="decrypt-and-validate-message-subflow" doc:id="e3f1c6c0-d4a4-4c58-85cb-61a8e8a3a7ae" >
+		
+		<crypto:pgp-decrypt doc:name="Pgp decrypt" config-ref="decrypt-pgp-conf" target="decryptedMessage">
+			<crypto:content><![CDATA[#[vars.message]]]></crypto:content>
+		</crypto:pgp-decrypt>
+		
+		<logger level="INFO" doc:name="Log decrypted message" doc:id="907d5713-1a99-410f-8da9-454e7838aefe" message="Server decrypted message: #[vars.decryptedMessage]" />
+		
+		<crypto:pgp-validate doc:name="Pgp validate" config-ref="validate-pgp-conf" expected="#[vars.signature]" value="#[vars.decryptedMessage]" />
+		
+		<logger level="INFO" doc:name="Log message successfully validated" doc:id="d200caf7-1fa9-44db-af83-46113ed2c4a8" message="Server message successfully validated with signature #[vars.signature]"/>
+	</sub-flow>	
+	
+</mule>

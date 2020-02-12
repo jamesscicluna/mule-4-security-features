@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:vault-properties-provider="http://www.mulesoft.org/schema/mule/vault-properties-provider" 
+	xmlns:vault="http://www.mulesoft.org/schema/mule/vault"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" 
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd 
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+	http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+	http://www.mulesoft.org/schema/mule/vault-properties-provider http://www.mulesoft.org/schema/mule/vault-properties-provider/current/mule-vault-properties-provider.xsd
+	http://www.mulesoft.org/schema/mule/vault http://www.mulesoft.org/schema/mule/vault/current/mule-vault.xsd">
+	
+	
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="237797a6-00a5-46a3-b641-56826af875b1" file="config/configuration.yaml" key="${server.secure.properties.key}" />
+	<configuration-properties doc:name="Configuration properties" doc:id="77ad6d6b-3560-4e74-bc7d-e33bc9fb2eb9" file="config/configuration.yaml" />
+	
+
+	<crypto:pgp-config name="validate-pgp-conf" publicKeyring="pgp/publicKeyClient.gpg"> 
+    	<crypto:pgp-key-infos>
+        <crypto:pgp-asymmetric-key-info keyId="${pgp.publicKeyClient.keyId}" fingerprint="${pgp.publicKeyClient.fingerprint}"/>
+    </crypto:pgp-key-infos>
+	</crypto:pgp-config>
+	
+	<crypto:pgp-config name="decrypt-pgp-conf" privateKeyring="pgp/privateKeyServer.gpg">
+    <crypto:pgp-key-infos>
+        <crypto:pgp-asymmetric-key-info keyId="${pgp.privateKeyServer.keyId}" fingerprint="${pgp.privateKeyServer.fingerprint}" 
+        passphrase="${secure::pgp.privateKeyServer.passphrase}" />
+    </crypto:pgp-key-infos>
+	</crypto:pgp-config>
+	
+	<http:listener-config name="HTTP_Listener_Server" doc:name="HTTP Listener config" doc:id="861fa6fa-8f63-4f07-a1fb-a7497336ba96" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	
+
+</mule>

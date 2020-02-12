@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+
+	<configuration-properties doc:name="Configuration properties" doc:id="865953c5-8ae0-4e66-9646-396a75828e3f" file="config/configuration.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="0c8c991d-034c-4b46-865e-c4fcf29fe937" file="config/configuration.yaml" key="${client.secure.properties.key}" />
+
+	<crypto:pgp-config name="encrypt-pgp-conf" publicKeyring="pgp/publicKeyServer.gpg">
+    <crypto:pgp-key-infos>
+        <crypto:pgp-asymmetric-key-info keyId="${pgp.publicKeyServer.keyId}" fingerprint="${pgp.publicKeyServer.fingerprint}"/>
+    </crypto:pgp-key-infos>
+	</crypto:pgp-config>
+	
+	<crypto:pgp-config name="sign-pgp-conf" privateKeyring="pgp/privateKeyClient.gpg">
+    <crypto:pgp-key-infos>
+        <crypto:pgp-asymmetric-key-info keyId="${pgp.privateKeyClient.keyId}" fingerprint="${pgp.privateKeyClient.fingerprint}" 
+        passphrase="${secure::pgp.privateKeyClient.passphrase}" />
+    </crypto:pgp-key-infos>
+	</crypto:pgp-config>
+	
+	<http:listener-config name="HTTP_Listener_Client" doc:name="HTTP Listener config" doc:id="5c360f46-2e7b-49ab-af51-01bb1f84f5a1" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_Server" doc:name="HTTP Request configuration" doc:id="64d77e00-2d00-4386-b03d-d4e9710ae0c0" >
+		<http:request-connection host="${http.server.host}" port="${http.server.port}" />
+	</http:request-config>
+			
+</mule>

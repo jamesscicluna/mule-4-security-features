@@ -1,0 +1,11 @@
+http:
+  host: "localhost"
+  port: "8092"
+pgp:
+  publicKeyClient:
+    keyId: "A32DD105"
+    fingerprint: "DF1D6A9BA32DD105"
+  privateKeyServer:
+    keyId: "0EDCE334"
+    fingerprint: "52746B930EDCE334" 
+    passphrase: "![pu7tb1fpIa9JMSPt5sYaXQ==]"
