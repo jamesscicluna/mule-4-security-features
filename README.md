@@ -7,7 +7,7 @@ A simple client-server case study to showcase the use of Mule 4 Secure Configura
 > **_DISCLAIMER:_** The only purpose of this source code is to showcase the use of different security features in Mule 4, as explained in [this blogpost](https://www.ricston.com/blog/mule-4-security-features/). **Do not under any circumstance use these applications in a production environment.**
 > * The private keys are publically accessible. 
 > * The public keys are not certified by a Certificate Authority. 
-> * The authour is not responsible for any problems arising from the use of any part of this source code.                  
+> * The author is not responsible for any problems arising from the use of any part of this source code.                  
 
 ## Setup
 
